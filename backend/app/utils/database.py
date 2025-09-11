@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import Base
+from backend.app.utils.models import Base
 
 DATABASE_URL = "postgresql+psycopg2://waterlevel_svc:G1g1.supomfuop@localhost/WaterLevel"
 
