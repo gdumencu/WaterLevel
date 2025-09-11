@@ -1,1 +1,1 @@
-# ChartPanel.tsx
+//ChartPanel.tsx
