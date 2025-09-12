@@ -322,7 +322,23 @@ You can access:
 http://<your-ip>:8000/docs → Swagger UI (FastAPI)
 http://<your-ip>:3000 → Frontend dashboard
  
+# 🧱 Database & Core Services Setup
+This module connects the backend to a PostgreSQL database using SQLAlchemy. It includes session management, model definitions, and basic connectivity tests.
 
+## ✅ Prerequisites
+ - Python 3.11+
+PostgreSQL running locally or via Docker
+.env file with DATABASE_URL
+## 🛠️ Setup Steps
+Install dependencies: pip install -r requirements.txt
+Ensure .env is configured with your DB credentials.
+Run the app: uvicorn app.main:app --reload --port 8001
+Visit /db-test to confirm DB connectivity.
+## 📂 Key Files
+app/models/database.py: SQLAlchemy engine and session setup
+app/dependencies.py: DB session injection
+app/models/*.py: ORM models
+app/main.py: FastAPI app entry point
 
 ## 👤 Author
 

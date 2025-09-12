@@ -1,7 +1,10 @@
 # user.py
-from sqlalchemy import Column, Integer, String, TIMESTAMP
+from sqlalchemy import Column, Integer, String, Text, TIMESTAMP, ForeignKey, JSON, DateTime
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+from datetime import datetime
+
 from .base import Base
-import datetime
 
 class User(Base):
     __tablename__ = 'users'
@@ -10,5 +13,7 @@ class User(Base):
     password_hash = Column(String(128), nullable=False)
     email = Column(String(100), unique=True, nullable=False)
     role = Column(String(20), nullable=False)
-    created_at = Column(TIMESTAMP, default=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
+    audit_logs = relationship("AuditLog", back_populates="user")
+    reports = relationship("Report", back_populates="user")
