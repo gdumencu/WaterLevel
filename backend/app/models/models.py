@@ -57,3 +57,10 @@ class Report(Base):
 
     user = relationship("User", back_populates="reports")
     device = relationship("Device", back_populates="reports")
+    
+class Job(Base): 
+    __tablename__ = "jobs" 
+    id = Column(Integer, primary_key=True, index=True) 
+    name = Column(String) 
+    config_json = Column(String) 
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)

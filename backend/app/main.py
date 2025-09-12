@@ -5,13 +5,14 @@ from sqlalchemy.orm import sessionmaker
 import os
 from dotenv import load_dotenv
 load_dotenv()
-
-
+from .models.database import Base,engine
+from .models import user,job,auditLog,device,telemetry
 # Read DB connection from environment variable or use default
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+psycopg2://waterlevel_svc:G1g1.supomfuop@db/WaterLevel")
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 @app.get("/health")
