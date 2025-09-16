@@ -12,5 +12,5 @@ class Report(Base):
     report_path = Column(String(255), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    user = relationship("User", back_populates="reports")
+    # user = relationship("User", back_populates="reports")
     device = relationship("Device", back_populates="reports")

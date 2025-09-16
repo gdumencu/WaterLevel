@@ -1,0 +1,116 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.dashboard-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.dashboard-topbar {
+  width: 100%;
+  background: #2a2a40;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #ffd700;
+}
+
+.dashboard-title {
+  font-weight: bold;
+  font-size: 1.8rem;
+}
+
+.logout-btn {
+  background: #ff4d4d;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-left: 16px;
+  transition: background 0.2s;
+}
+
+.logout-btn:hover {
+  background: #cc0000;
+}
+
+.sidebar {
+  width: 100px;
+  background: #2a2a40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+}
+
+.sidebar-btn {
+  background: #3a3a5e;
+  border: none;
+  margin: 10px 0;
+  padding: 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.sidebar-btn img {
+  width: 50px;
+  height: 50px;
+}
+
+.sidebar-btn:hover {
+  background: #505080;
+  transform: scale(1.05);
+}
+
+.dashboard-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  background: #f0f2f5;
+  overflow-y: auto;
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.panel-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.dashboard-panels-bottom {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.raw-data-panel,
+.aggregated-data-panel {
+  flex: 1;
+  min-height: 250px;
+  overflow-y: auto;
+  background: #f5f5f5;
+  border: 1px solid #bbb;
+  border-radius: 12px;
+  padding: 12px;
+}
