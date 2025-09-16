@@ -1,0 +1,37 @@
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore VS Code workspace settings
+.vscode/
+*.code-workspace
+# Ignore temporary files
+*.log
+*.tmp
+*.bak
+*.swp
+
+# Ignore node modules if frontend tools are used
+node_modules/
+
+# Ignore Python cache files if scripts are added later
+__pycache__/
+*.pyc
+
+# Ignore ZIPs or exports
+*.zip
+
+# Ignore OS-specific files
+ehthumbs.db
+Icon?
+desktop.ini
+
+# Ignore markdown preview cache (if any)
+.md-preview/
+
+# Ignore backup files
+*.old
+*.orig
+
+# Ignore generated documentation (optional)
+docs/
