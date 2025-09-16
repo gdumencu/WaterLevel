@@ -23,8 +23,7 @@ export default function Dashboard() {
 
     try {
       // Decode the token and assert its shape
-      const decoded = jwt_decode<JwtPayload>(token.at.);
-      
+      const decoded = jwt_decode<JwtPayload>(token);
 
       // Check if the token has expired
       const now = Math.floor(Date.now() / 1000); // current time in seconds
