@@ -1,9 +1,9 @@
+// frontend/src/pages/login.tsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
-//
 
-/**frontend\src\pages\login.tsx
+/**
  * Login page component for WaterLevel.
  * Handles user authentication and displays errors.
  */
@@ -13,6 +13,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  // const [role, setRole] = useState('');
 
   // Handle login button click
   const handleLogin = async () => {
@@ -25,19 +26,12 @@ export default function Login() {
         password
       }));
       // Store JWT token in localStorage
-      console.log('Login response:', res.data); 
       localStorage.setItem('token', res.data.access_token);
       setTimeout(() => {
-          window.location.href = '/dashboard';
-        }, 100); // small delay to ensure token is stored
-
-      console.log('Token stored in localStorage');
+        window.location.href = '/dashboard';
+      }, 100); // small delay to ensure token is stored
       setLoading(false);
-      console.log('Redirecting to dashboard...');
-      // Redirect to dashboard
-      window.location.href = '/dashboard';
     } catch (err) {
-      console.error("Login error:", err);
       setLoading(false);
       setError('Login failed. Please check your credentials.');
     }

@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import text
 import app.models  # This triggers __init__.py and registers all models
+from app.routers.panels import router as panels_router
 
 import os
 from dotenv import load_dotenv
@@ -22,7 +23,13 @@ engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+
+app = FastAPI(
+    title="WaterLevel Dashboard API",
+    description="Backend API for role-based dashboard panels",
+    version="1.0.0"
+)
+
 
 # Add CORS middleware
 app.add_middleware(
@@ -34,6 +41,9 @@ app.add_middleware(
 )
 # Register routers
 # -----------------------------
+# Include panel routes
+app.include_router(panels_router)
+
 app.include_router(auth.router)
 
 @app.get("/health")

@@ -1,1 +1,0 @@
-// JobConfigPanel.tsx
