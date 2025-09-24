@@ -182,7 +182,7 @@ WaterLevel/
 
 - Login endpoint validates credentials and returns a JWT token.
   Passwords are hashed using bcrypt.
-  JWT tokens include sub (username) and exp (expiration).
+  JWT tokens include user (username) and exp (expiration).
   CORS is enabled for frontend communication.
 
 ## Frontend
@@ -380,6 +380,34 @@ app/models/database.py: SQLAlchemy engine and session setup
 app/dependencies.py: DB session injection
 app/models/\*.py: ORM models
 app/main.py: FastAPI app entry point
+
+# 🔒 RBAC Config Lock Feature
+The WaterLevel telemetry dashboard supports exclusive configuration mode to ensure safe and coordinated updates:
+
+Who can lock?
+## Only users with Admin or Operator roles can initiate configuration mode.
+
+## How does it work?
+When configuration mode is activated, all other users are temporarily blocked from accessing configuration panels. A notification banner displays who is currently configuring.
+
+## How is the lock released?
+The lock is released when the locker saves their changes, restoring access to all users.
+
+## What happens if the locker disconnects?
+The system may implement a timeout or allow another Admin to force unlock (optional for MVP).
+
+## Audit Logging
+All configuration lock/unlock actions will be recorded for future auditing.
+
+## Endpoints:
+
+POST /api/config/lock — Initiate configuration lock
+POST /api/config/unlock — Release configuration lock
+GET /api/config/status — Check current lock status
+## Frontend Integration:
+
+Dashboard panels check lock status before allowing configuration.
+Non-locking users see a notification and cannot edit until the lock is released.
 
 ## 👤 Author
 

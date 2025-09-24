@@ -6,7 +6,22 @@
 **Version:** v1  
 **Author:** Dorel Dumencu
 
+---# WaterLevel Project
+
+**WaterLevel** is a telemetry system designed to monitor and visualize the movement of angle-controlled robots. It provides real-time tracking, deviation analysis, and projected arrival point visualization through a secure web dashboard.
+
 ---
+
+## 🚀 Features
+
+- Real-time UART data streaming and visualization
+- Role-based access control (Admin, Operator, Viewer)
+- Job configuration and robot path projection
+- Audit logging and printable PDF reports
+- Secure access over local network and internet
+- Modular backend (FastAPI) and frontend (Next.js + TypeScript)
+- PostgreSQL database integration
+
 
 ## 🎯 Goal
 

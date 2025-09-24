@@ -13,23 +13,69 @@ import { JSX } from "react";
 type PanelKey = "UARTConfig" | "JobConfig" | "Chart" | "RawData" | "AggregateData";
 
 /**
- * Props for PanelRenderer: current role and visible panels
+ * Props for PanelRenderer: current role, visible panels, user identity,
+ * lock state, and lock/unlock handlers for config mode.
  */
 interface PanelRendererProps {
   role: string;
+  user: string;
   visiblePanels: Record<PanelKey, boolean>;
+  isLocked: boolean;
+  locked_by?: string;
+  onLock: () => void;
+  onUnlock: () => void;
 }
 
 /**
- * PanelRenderer component: renders all panels available to the user,
- * stacking them vertically except Raw Data and Aggregate Data, which are side by side.
+ * PanelRenderer component: renders all panels available to the user.
+ * - Stacks most panels vertically.
+ * - Renders Raw Data and Aggregate Data side by side.
+ * - Passes lock state and handlers to config panels.
  */
-export default function PanelRenderer({ role, visiblePanels }: PanelRendererProps) {
+export default function PanelRenderer({
+  role,
+  user,
+  visiblePanels,
+  isLocked,
+  locked_by,
+  onLock,
+  onUnlock,
+}: PanelRendererProps) {
   // Panel definitions and allowed roles (use lowercase for roles)
   const panels: { key: PanelKey; component: JSX.Element; roles: string[] }[] = [
-    { key: "UARTConfig", component: <UARTConfig />, roles: ["admin"] },
-    { key: "JobConfig", component: <JobConfig />, roles: ["admin", "operator"] },
-    { key: "Chart", component: <Chart />, roles: ["admin", "operator", "viewer"] },
+    {
+      key: "UARTConfig",
+      component: (
+        <UARTConfig
+          user={user}
+          role={role}
+          isLocked={isLocked}
+          locked_by={locked_by}
+          onLock={onLock}
+          onUnlock={onUnlock}
+        />
+      ),
+      roles: ["admin"],
+    },
+    {
+      key: "JobConfig",
+      component: (
+        <JobConfig
+          user={user}
+          role={role}
+          isLocked={isLocked}
+          locked_by={locked_by}
+          onLock={onLock}
+          onUnlock={onUnlock}
+        />
+      ),
+      roles: ["admin", "operator"],
+    },
+    {
+      key: "Chart",
+      component: <Chart />,
+      roles: ["admin", "operator", "viewer"],
+    },
   ];
 
   // Raw Data and Aggregate Data are rendered side by side
@@ -52,8 +98,16 @@ export default function PanelRenderer({ role, visiblePanels }: PanelRendererProp
       {/* Raw Data and Aggregate Data side by side */}
       {(showRaw || showAggregate) && (
         <div className="panel-row">
-          {showRaw && <div className="panel-col"><RawData /></div>}
-          {showAggregate && <div className="panel-col"><AggregateData /></div>}
+          {showRaw && (
+            <div className="panel-col">
+              <RawData />
+            </div>
+          )}
+          {showAggregate && (
+            <div className="panel-col">
+              <AggregateData />
+            </div>
+          )}
         </div>
       )}
     </div>

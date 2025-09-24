@@ -19,7 +19,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
         print("Invalid credentials")
         raise HTTPException(status_code=400, detail="Invalid credentials")
     # ⬇️ Add role to JWT payload
-    token = create_access_token(data={"sub": user.username, "role": user.role})
+    token = create_access_token(data={"userName": user.username, "role": user.role})
     print(user.role)
     print(token)
     print(f"Login successful for user: {form_data.username}")

@@ -19,17 +19,17 @@ def get_current_user_with_role(token: str = Depends(oauth2_scheme)) -> Dict:
     """
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
+        userName: str = payload.get("userName")
         role: str = payload.get("role")
         print(f"Decoded JWT payload: {payload}")  # Debugging line
-        print(f"Extracted username: {username}, role: {role}")  # Debugging line
-        if username is None or role is None:
-            print("Username or role is None")  # Debugging line 
+        print(f"Extracted userName: {userName}, role: {role}")  # Debugging line
+        if userName is None or role is None:
+            print("UserName or role is None")  # Debugging line 
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid authentication credentials",
             )
-        return {"username": username, "role": role}
+        return {"userName": userName, "role": role}
     except jwt.ExpiredSignatureError:
         print("Token has expired")  # Debugging line    
         raise HTTPException(
