@@ -3,7 +3,7 @@
 # Use absolute imports for scripts run as modules
 from models.user import User
 from models.audit_logs import AuditLog  # <-- This is critical!
-from models.database import SessionLocal
+from db.database import SessionLocal
 from core.security import get_password_hash  # core is a sibling of models
 
 db = SessionLocal()

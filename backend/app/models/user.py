@@ -4,19 +4,23 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.models.base import Base
 
+
 class User(Base):
     """
     SQLAlchemy User model.
-    Relationships use string references to avoid circular imports.
+    Stores user credentials and role-based access.
     """
-    __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
-    username = Column(String(50), unique=True, nullable=False)
-    hashed_password = Column(String(128), nullable=False)
-    is_active = Column(Boolean, default=True)
-    email = Column(String(100), unique=True, nullable=False)
-    role = Column(String(20), nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    __tablename__ = "users"
 
-    # Reference AuditLog by string name, not by importing the class
-    audit_logs = relationship("AuditLog", back_populates="user")
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String(50), unique=True, nullable=False, index=True)
+    hashed_password = Column(String(128), nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
+    email = Column(String(100), unique=True, nullable=False, index=True)
+    role = Column(String(20), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    # Relationships
+    audit_logs = relationship(
+        "AuditLog", back_populates="user", cascade="all, delete-orphan"
+    )

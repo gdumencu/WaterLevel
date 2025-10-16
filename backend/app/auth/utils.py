@@ -1,13 +1,19 @@
-# backend/auth/utils.py
+# backend/app/auth/utils.py
 
 from fastapi import Depends, HTTPException, status
-from .dependencies import get_current_user_with_role
+from app.core.auth_utils import get_current_user_with_role  # Import from auth_utils.py
+
+# ----------------------------
+# Role-based access dependencies
+# ----------------------------
 
 def admin_only(user=Depends(get_current_user_with_role)):
     """
-    Allows access only to Admin users.
+    Dependency to allow access only to Admin users.
+    
+    Raises HTTP 403 if the user's role is not 'admin'.
     """
-    if user["role"] != "Admin":
+    if user["role"] != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Admin access required"
@@ -15,9 +21,11 @@ def admin_only(user=Depends(get_current_user_with_role)):
 
 def operator_or_admin(user=Depends(get_current_user_with_role)):
     """
-    Allows access to Operator and Admin users.
+    Dependency to allow access to users with 'operator' or 'admin' roles.
+    
+    Raises HTTP 403 if the user's role is not 'operator' or 'admin'.
     """
-    if user["role"] not in ["Admin", "Operator"]:
+    if user["role"] not in ["admin", "operator"]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Operator or Admin access required"
@@ -25,6 +33,8 @@ def operator_or_admin(user=Depends(get_current_user_with_role)):
 
 def all_roles(user=Depends(get_current_user_with_role)):
     """
-    Allows access to all authenticated users.
+    Dependency for any authenticated user, regardless of role.
+    
+    Does not restrict access; just ensures the user is authenticated.
     """
-    pass  # No restriction
+    return user  # Simply returns user info; no restriction

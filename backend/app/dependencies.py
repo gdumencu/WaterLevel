@@ -1,6 +1,6 @@
 # backend\app\dependencies.py
 from sqlalchemy.orm import Session
-from app.models.database import SessionLocal  # adjust path if needed
+from app.db.database import SessionLocal, get_db
 
 
 def get_db():
