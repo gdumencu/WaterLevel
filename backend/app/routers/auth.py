@@ -1,47 +1,27 @@
-# backend/app/routers/auth.py
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
+"""
+routers/auth.py
+FastAPI router for login and dashboard routes.
+Uses the auth_service for clean business logic separation.
+"""
+
+from fastapi import APIRouter, Depends, Form
 from sqlalchemy.orm import Session
-from app.core.security import verify_password, get_password_hash
-from app.core.auth_utils import get_current_user  # for protected routes
 from app.dependencies import get_db
-from app.models.user import User
+from app.services.auth_service import login_user
+from app.core.auth_utils import get_current_user
 
-router = APIRouter(tags=["Authentication"])  # No prefix
+router = APIRouter(tags=["Authentication"])
 
-# ----------------------
-# Login endpoint
-# ----------------------
-@router.post("/login", response_model=dict)
-def login(form_data: OAuth2PasswordRequestForm = Depends(),
-          db: Session = Depends(get_db)):
+@router.post("/login")
+def login(username: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
     """
-    Authenticate user and return JWT token.
+    Login endpoint: verifies credentials and returns JWT token.
     """
-    user: User = db.query(User).filter(User.username == form_data.username).first()
-    print(f"[DEBUG] Attempting login for user: {form_data.username}")
+    return login_user(db, username, password)
 
-    if not user or not verify_password(form_data.password, user.hashed_password):
-        print("[DEBUG] Invalid credentials")
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid credentials"
-        )
-
-    # Include username and role in JWT token
-    from app.core.jwt import create_access_token
-    token = create_access_token(data={"username": user.username, "role": user.role})
-    print(f"[DEBUG] Login successful for user: {user.username}")
-
-    return {"access_token": token, "token_type": "bearer"}
-
-# ----------------------
-# Dashboard endpoint
-# ----------------------
-@router.get("/dashboard", response_model=dict)
-def dashboard(current_user: User = Depends(get_current_user)):
+@router.get("/dashboard")
+def dashboard(current_user = Depends(get_current_user)):
     """
-    Example protected endpoint.
+    Example protected route: accessible only with valid JWT.
     """
-    print(f"[DEBUG] Accessing dashboard for user: {current_user.username}")
     return {"message": f"Welcome {current_user.username}!", "role": current_user.role}
