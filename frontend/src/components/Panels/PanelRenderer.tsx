@@ -1,9 +1,9 @@
 // frontend/src/components/Panels/PanelRenderer.tsx
 import React from "react";
-import UARTConfig from "./UARTConfig";
-import JobConfig from "./JobConfig";
-import Chart from "./Chart";
-import RawData from "./RawData";
+import UARTConfig from "./UARTConfigPanel";
+import JobConfig from "./JobConfigPanel";
+import Chart from "./ChartPanel";
+import RawData from "./RawDataPanel";
 import AggregateData from "./AggregateData";
 import { JSX } from "react";
 
