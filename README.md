@@ -408,7 +408,37 @@ GET /api/config/status — Check current lock status
 
 Dashboard panels check lock status before allowing configuration.
 Non-locking users see a notification and cannot edit until the lock is released.
+# 📌 T8 – Audit Logging for Lock/Unlock
+## ✅ Overview
+This feature ensures that every lock/unlock configuration action performed by an Administrator or Operator is logged in the database and displayed in the Audit Log Panel on the dashboard.
+🔐 Roles
+ - Administrator
+    Can lock/unlock configuration.
+    Actions are logged with role = admin.
+ - Operator
+    Can lock/unlock configuration.
+    Actions are logged with role = operator.
+## 🧩 Components
+ - Frontend
+    AuditLogPanel.tsx
+        Displays the last 10 audit log entries for the current user.
+        Shows a Retry button if fetching logs fails.
+        Fetches logs from /api/audit/logs/me.
+Backend
+ - Endpoints
+    POST /api/config/lock & POST /api/config/unlock
 
+# Lock/unlock configuration.
+    Creates audit log entries.
+    - GET /api/audit/logs/me
+    Returns the latest 10 audit logs for the authenticated user.
+    Database
+        Table: audit_logs
+        Columns: id, user_id, action, role, details, created_at.
+    🔄 Flow
+        User clicks Lock or Unlock → API endpoint (/api/config/lock or /unlock).
+        Backend logs the action in audit_logs table.
+        AuditLogPanel fetches logs via /api/audit/logs/me and displays them.
 ## 👤 Author
 
 **Dorel Dumencu**

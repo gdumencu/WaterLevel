@@ -1,6 +1,20 @@
-import React, { useEffect, useState } from "react";
+/**
+ * AuditLogPanel.tsx
+ * React component for displaying audit logs related to lock/unlock actions.
+ *
+ * ✅ Responsibilities:
+ * - Fetch audit logs for the current user
+ * - Display logs in a table format
+ * - Show loading and error states
+ * - Provide a manual refresh button
+ */
+
+import React, { useEffect, useState, useCallback } from "react";
 import { format } from "date-fns";
 
+// -----------------------------
+// Type Definitions
+// -----------------------------
 interface AuditLogEntry {
   id: number;
   action: "lock" | "unlock";
@@ -14,50 +28,78 @@ interface AuditLogPanelProps {
   role: string;
 }
 
+// -----------------------------
+// Component
+// -----------------------------
 export default function AuditLogPanel({ userName, role }: AuditLogPanelProps) {
   const [logs, setLogs] = useState<AuditLogEntry[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // useEffect(() => {
-  //   const fetchLogs = async () => {
-  //     try {
-  //       const token = localStorage.getItem("token");
-  //               const response = await fetch(
-  //         //`${process.env.NEXT_PUBLIC_API_BASE}/api/audit/logs/me?start=2020-01-01T00:00:00Z&end=${new Date().toISOString()}`,
-  //         `${process.env.NEXT_PUBLIC_API_BASE}/api/audit/logs/me`,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //             "X-User": userName,
-  //           },
-  //         }
-  //       );
-  //       if (!response.ok) {
-  //         throw new Error("Failed to fetch audit logs");
-  //       }
-  //       const data = await response.json();
-  //       setLogs(data);
-  //     } catch (err: any) {
-  //       setError(err.message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+  // -----------------------------
+  // Fetch logs function (reusable for retry/refresh)
+  // -----------------------------
+  const fetchLogs = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/audit/logs/me`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-User": userName,
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch audit logs");
+      }
+      const data = await response.json();
+      setLogs(data);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [userName]);
 
-  //   fetchLogs();
-  // }, [userName]);
+  // -----------------------------
+  // Initial fetch on mount
+  // -----------------------------
+  useEffect(() => {
+    fetchLogs();
+  }, [fetchLogs]);
 
+  // -----------------------------
+  // Render
+  // -----------------------------
   return (
-    <div className="panel">
+    <div className="panel audit-log-panel">
       <h2 className="panel-title">Audit Log</h2>
 
+      {/* Refresh Button */}
+      <div className="panel-controls">
+        <button onClick={fetchLogs} className="refresh-button">
+          🔄 Refresh Logs
+        </button>
+      </div>
+
+      {/* Loading State */}
       {loading ? (
         <div className="panel-loading">Loading audit logs...</div>
       ) : error ? (
-        <div className="panel-error">{error}</div>
+        <div className="panel-error">
+          <p>{error}</p>
+          <button onClick={fetchLogs} className="retry-button">
+            🔁 Retry
+          </button>
+        </div>
       ) : logs.length === 0 ? (
-        <div className="panel-empty">No audit log entries found for this user.</div>
+        <div className="panel-empty">
+          No audit log entries found for this user.
+        </div>
       ) : (
         <table className="audit-log-table">
           <thead>
@@ -83,3 +125,4 @@ export default function AuditLogPanel({ userName, role }: AuditLogPanelProps) {
     </div>
   );
 }
+``

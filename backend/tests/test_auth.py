@@ -2,7 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from app.main import app
 from tests.setup_test_users import create_test_user
-from app.dependencies import get_db
+from app.db.database import get_db
 
 client = TestClient(app)
 

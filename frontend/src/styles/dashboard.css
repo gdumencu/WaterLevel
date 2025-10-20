@@ -294,3 +294,16 @@
 .panel-empty {
   color: #999;
 }
+.retry-button {
+  margin-top: 10px;
+  padding: 6px 12px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  color: #333;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.retry-button:hover {
+  background-color: #e0e0e0;
+}

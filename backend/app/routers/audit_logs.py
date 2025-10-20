@@ -1,5 +1,3 @@
-# backend/app/routers/audit_logs.py
-
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List
@@ -10,9 +8,7 @@ from app.models.user import User
 from app.dependencies import get_current_admin_or_operator
 from pydantic import BaseModel
 
-router = APIRouter(
-    tags=["Audit Logs"]
-)
+router = APIRouter(tags=["Audit Logs"])
 
 # ✅ Response schema for frontend
 class AuditLogResponse(BaseModel):
@@ -22,18 +18,21 @@ class AuditLogResponse(BaseModel):
     details: str | None
     created_at: datetime
 
-# ✅ GET logs for current user (Admin/Operator only)
+# ✅ GET last 10 logs for current user
 @router.get("/logs/me", response_model=List[AuditLogResponse])
 def get_my_audit_logs(
-    start: datetime = Query(...),
-    end: datetime = Query(...),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_admin_or_operator)
 ):
-    logs = db.query(AuditLog).filter(
-        AuditLog.user_id == current_user.id,
-        AuditLog.created_at.between(start, end)
-    ).order_by(AuditLog.created_at.desc()).all()
+    print("Fetching audit logs for user:", current_user.username)
+    print("[AUDIT] /logs/me endpoint hit")
+    logs = (
+        db.query(AuditLog)
+        # .filter(AuditLog.user_id == current_user.id)
+        .order_by(AuditLog.created_at.desc())
+        .limit(10)
+        .all()
+    )
     return logs
 
 # ✅ Optional: POST endpoint to create a log entry

@@ -1,5 +1,7 @@
 """
+backend\app\main.py
 Main FastAPI application entrypoint for WaterLevel.
+
 
 ✅ Responsibilities:
 - Load environment variables
@@ -130,8 +132,9 @@ def try_include_router(module_path: str, prefix: str | None = None, tags: list |
 # -------------------------------------------------------------------
 try_include_router("app.routers.auth", tags=["Auth"])           # will expose `/login`
 try_include_router("app.routers.panels", prefix="/panels", tags=["Panels"])
-try_include_router("app.routers.config_lock", tags=["Audit Logs"])
+try_include_router("app.routers.config_lock", tags=["Config Logs"])
 try_include_router("app.routers.audit_logs", prefix="/audit", tags=["Audit Logs"])  
+
 # Add more routers as needed:
 # try_include_router("app.routers.users", prefix="/users", tags=["Users"])
 
