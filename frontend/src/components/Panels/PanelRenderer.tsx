@@ -5,12 +5,13 @@ import JobConfig from "./JobConfigPanel";
 import Chart from "./ChartPanel";
 import RawData from "./RawDataPanel";
 import AggregateData from "./AggregateData";
+import AuditLogPanel from "./AuditLogPanel";
 import { JSX } from "react";
 
 /**
  * PanelKey type: all possible panel keys for dashboard
  */
-type PanelKey = "UARTConfig" | "JobConfig" | "Chart" | "RawData" | "AggregateData";
+type PanelKey = "UARTConfig" | "JobConfig" | "Chart" | "RawData" | "AggregateData" | "AuditLog";
 
 /**
  * Props for PanelRenderer: current role, visible panels, user identity,
@@ -76,6 +77,11 @@ export default function PanelRenderer({
       component: <Chart />,
       roles: ["admin", "operator", "viewer"],
     },
+    {
+      key: "AuditLog",
+      component: <AuditLogPanel user={user} role={role} />,
+      roles: ["admin", "operator"],
+    },
   ];
 
   // Raw Data and Aggregate Data are rendered side by side
@@ -100,7 +106,7 @@ export default function PanelRenderer({
         <div className="panel-row">
           {showRaw && (
             <div className="panel-col">
-              <RawData />
+              <RawData/>
             </div>
           )}
           {showAggregate && (
@@ -113,3 +119,4 @@ export default function PanelRenderer({
     </div>
   );
 }
+``

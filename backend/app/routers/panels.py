@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends
 from ..auth.utils import admin_only, operator_or_admin, all_roles
 
-router = APIRouter(prefix="/panels", tags=["panels"])
+router = APIRouter(tags=["Panels"])
 
 @router.get("/uart-config")
 def get_uart_config(user=Depends(admin_only)):

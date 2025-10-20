@@ -1,43 +1,80 @@
 # backend/app/config.py
-from dotenv import load_dotenv
+
+"""
+📦 config.py — Centralized Configuration Loader for WaterLevel
+
+✅ Responsibilities:
+- Load environment variables from .env
+- Strip quotes from sensitive values
+- Validate and parse types (str, int, bool, list)
+- Centralize access to project-wide settings
+"""
+
 import os
+from dotenv import load_dotenv
 from pathlib import Path
 
-# Load .env variables from project root
+# -------------------------------------------------------------------
+# 1️⃣ Load .env from backend root
+# -------------------------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent  # points to backend/
-load_dotenv(dotenv_path=BASE_DIR / ".env")
+ENV_PATH = BASE_DIR / ".env"
+load_dotenv(dotenv_path=ENV_PATH)
 
-# =========================
-# Database configuration
-# =========================
-DATABASE_URL = os.getenv("DATABASE_URL")  # e.g., postgres://user:pass@localhost/dbname
+# -------------------------------------------------------------------
+# 2️⃣ Utility: Strip quotes from env values
+# -------------------------------------------------------------------
+def clean_env(key: str, default: str = "") -> str:
+    value = os.getenv(key, default)
+    return value.strip('"').strip("'") if value else default
 
-# =========================
-# FastAPI settings
-# =========================
-APP_NAME = os.getenv("APP_NAME", "WaterLevel Dashboard")
-APP_VERSION = os.getenv("APP_VERSION", "0.1.0")
-DEBUG = os.getenv("DEBUG", "True").lower() in ["true", "1"]
+def clean_bool(key: str, default: bool = False) -> bool:
+    return os.getenv(key, str(default)).lower() in ["true", "1", "yes"]
 
-# =========================
-# Security / Auth
-# =========================
-SECRET_KEY = os.getenv("SECRET_KEY")  # for JWT tokens
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
+def clean_int(key: str, default: int = 0) -> int:
+    try:
+        return int(os.getenv(key, default))
+    except ValueError:
+        return default
 
-# =========================
-# CORS settings (for T9/T10)
-# =========================
-ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*").split(",")
+def clean_list(key: str, default: str = "") -> list[str]:
+    raw = os.getenv(key, default)
+    return [item.strip() for item in raw.split(",") if item.strip()]
 
-# =========================
-# UART / Hardware settings (for T12/T13)
-# =========================
-DEFAULT_UART_PORT = os.getenv("DEFAULT_UART_PORT", "COM1")  # or /dev/ttyUSB0
-DEFAULT_BAUDRATE = int(os.getenv("DEFAULT_BAUDRATE", "9600"))
-LINE_SEPARATOR = os.getenv("LINE_SEPARATOR", "\n")
+# -------------------------------------------------------------------
+# 3️⃣ Database Configuration
+# -------------------------------------------------------------------
+DATABASE_URL = clean_env("DATABASE_URL")
 
-# =========================
-# Other project-wide settings
-# =========================
-LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+# -------------------------------------------------------------------
+# 4️⃣ FastAPI App Settings
+# -------------------------------------------------------------------
+APP_NAME = clean_env("APP_NAME", "WaterLevel Dashboard")
+APP_VERSION = clean_env("APP_VERSION", "0.1.0")
+DEBUG = clean_bool("DEBUG", True)
+
+# -------------------------------------------------------------------
+# 5️⃣ JWT / Security Settings
+# -------------------------------------------------------------------
+SECRET_KEY = clean_env("SECRET_KEY", "your-secret-key")
+ALGORITHM = clean_env("ALGORITHM", "HS256")
+ACCESS_TOKEN_EXPIRE_MINUTES = clean_int("ACCESS_TOKEN_EXPIRE_MINUTES", 60)
+REFRESH_TOKEN_EXPIRE_MINUTES = clean_int("REFRESH_TOKEN_EXPIRE_MINUTES", 60 * 24 * 7)
+
+# -------------------------------------------------------------------
+# 6️⃣ CORS Settings
+# -------------------------------------------------------------------
+ALLOWED_ORIGINS = clean_list("ALLOWED_ORIGINS", "*")
+
+# -------------------------------------------------------------------
+# 7️⃣ UART / Hardware Settings
+# -------------------------------------------------------------------
+DEFAULT_UART_PORT = clean_env("DEFAULT_UART_PORT", "COM1")
+DEFAULT_BAUDRATE = clean_int("DEFAULT_BAUDRATE", 9600)
+LINE_SEPARATOR = clean_env("LINE_SEPARATOR", "\n")
+
+# -------------------------------------------------------------------
+# 8️⃣ Logging & Audit
+# -------------------------------------------------------------------
+LOG_LEVEL = clean_env("LOG_LEVEL", "INFO")
+AUDIT_LOGGING_ENABLED = clean_bool("AUDIT_LOGGING_ENABLED", True)

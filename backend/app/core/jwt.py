@@ -1,26 +1,33 @@
-#backend\app\core\jwt.py
-# from datetime import datetime, timedelta
-# from jose import JWTError, jwt
+# backend/app/core/jwt.py
 
-# SECRET_KEY = "your-secret-key"
-# ALGORITHM = "HS256"
-# ACCESS_TOKEN_EXPIRE_MINUTES = 30
+"""
+🔐 jwt.py — JWT Token Creation Utility for WaterLevel
 
-# def create_access_token(data: dict):
-#     to_encode = data.copy()
-#     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-#     to_encode.update({"exp": expire})
-#     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+✅ Responsibilities:
+- Create access tokens with expiration
+- Use centralized config values for security
+- Support flexible expiration overrides
+"""
+
 from datetime import datetime, timedelta
 from jose import jwt
+from app.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
-SECRET_KEY = "your-secret-key"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
-
-def create_access_token(data: dict, expires_delta: timedelta = None):
+# -------------------------------------------------------------------
+# 1️⃣ Create JWT Access Token
+# -------------------------------------------------------------------
+def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
+    """
+    ✅ Creates a JWT token with expiration.
+    - `data`: dictionary of claims (e.g., userName, role)
+    - `expires_delta`: optional timedelta override
+    - Uses default expiration from config if not provided
+    """
     to_encode = data.copy()
+
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({"exp": expire})
+
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    print(f"[DEBUG] Created JWT token: {encoded_jwt}")
     return encoded_jwt

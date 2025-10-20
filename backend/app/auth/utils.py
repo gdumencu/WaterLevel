@@ -13,6 +13,7 @@ def admin_only(user=Depends(get_current_user_with_role)):
     
     Raises HTTP 403 if the user's role is not 'admin'.
     """
+    print(f"[DEBUG] Checking admin access for user: {user}")
     if user["role"] != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

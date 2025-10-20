@@ -15,7 +15,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 from dotenv import load_dotenv
 import os
-import logging
 
 # -------------------------------------------------------------------
 # 1️⃣ Load environment variables
@@ -25,12 +24,17 @@ load_dotenv()
 # -------------------------------------------------------------------
 # 2️⃣ Configure logging
 # -------------------------------------------------------------------
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("waterlevel.main")
+from app.logging_config import setup_logging, logger
+
+setup_logging()
+
+# Now you can use:
+logger.info("App started")
 
 # -------------------------------------------------------------------
 # 3️⃣ Create FastAPI instance
 # -------------------------------------------------------------------
+
 app = FastAPI(
     title=os.getenv("APP_TITLE", "WaterLevel API"),
     description=os.getenv("APP_DESCRIPTION", "Backend for WaterLevel telemetry/dashboard"),
@@ -108,8 +112,7 @@ except Exception:
 def try_include_router(module_path: str, prefix: str | None = None, tags: list | None = None):
     """
     Import a router module safely and include it if found.
-    Example:
-        try_include_router("app.routers.auth", tags=["Auth"])
+    Example: try_include_router("app.routers.auth", tags=["Auth"])
     """
     try:
         module = __import__(module_path, fromlist=["router"])
@@ -120,16 +123,15 @@ def try_include_router(module_path: str, prefix: str | None = None, tags: list |
         app.include_router(router, prefix=prefix or "")
         logger.info(f"✅ Router included from {module_path} (prefix={prefix or ''})")
     except Exception as e:
-        logger.debug(f"Router import failed for {module_path}: {e}", exc_info=e)
+        logger.info(f"Router import failed for {module_path}: {e}", exc_info=e)
 
 # -------------------------------------------------------------------
 # 9️⃣ Include all routers
 # -------------------------------------------------------------------
-# Make sure backend/app/routers/auth.py defines `router = APIRouter()`
 try_include_router("app.routers.auth", tags=["Auth"])           # will expose `/login`
 try_include_router("app.routers.panels", prefix="/panels", tags=["Panels"])
-try_include_router("app.routers.config_lock", prefix="/config", tags=["Config"])
-
+try_include_router("app.routers.config_lock", tags=["Audit Logs"])
+try_include_router("app.routers.audit_logs", prefix="/audit", tags=["Audit Logs"])  
 # Add more routers as needed:
 # try_include_router("app.routers.users", prefix="/users", tags=["Users"])
 

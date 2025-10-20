@@ -246,3 +246,51 @@
   height: 32px;
   margin-bottom: 4px;
 }
+/* Audit Log Panel Table */
+.audit-log-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.audit-log-table th,
+.audit-log-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: left;
+  font-size: 0.95rem;
+  color: #2a2a40;
+}
+
+.audit-log-table th {
+  background-color: #f9f9f9;
+  font-weight: 600;
+}
+
+.audit-entry.lock td {
+  color: #cc0000;
+  font-weight: 600;
+}
+
+.audit-entry.unlock td {
+  color: #2a2a40;
+  font-weight: 600;
+}
+
+/* Panel messages */
+.panel-loading,
+.panel-error,
+.panel-empty {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #2a2a40;
+  padding: 16px;
+  text-align: center;
+}
+.panel-error {
+  color: #cc0000;
+}
+.panel-empty {
+  color: #999;
+}

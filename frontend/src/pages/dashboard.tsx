@@ -1,4 +1,5 @@
 // frontend/src/pages/dashboard.tsx
+
 import { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 import Sidebar from "../components/SideBar/ToggleButtons";
@@ -11,23 +12,13 @@ import LockBanner from "../components/LockBanner";
  * Ensure this matches the backend JWT claims.
  */
 interface JwtPayload {
-  userName: string; // or 'sub' if your backend uses that
+  userName: string;
   exp: number;
   role: string;
 }
-function fetchWithUser(url: string, options: any = {}) {
-  const token = localStorage.getItem("token");
-  return fetch(url, {
-    ...options,
-    headers: {
-      ...options.headers,
-      "X-User": localStorage.getItem("userName") || "",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-}
 
-type PanelKey = "UARTConfig" | "JobConfig" | "Chart" | "RawData" | "AggregateData";
+// ✅ Updated PanelKey type to include AuditLog
+type PanelKey = "UARTConfig" | "JobConfig" | "Chart" | "RawData" | "AggregateData" | "AuditLog";
 
 /**
  * Main dashboard page for WaterLevel telemetry system.
@@ -35,92 +26,130 @@ type PanelKey = "UARTConfig" | "JobConfig" | "Chart" | "RawData" | "AggregateDat
  * Implements config lock logic.
  */
 export default function Dashboard() {
-  // Track logged-in user and role
+  // -------------------------------------------------------------------
+  // 1️⃣ Track logged-in user and role
+  // -------------------------------------------------------------------
   const [userName, setUser] = useState("");
   const [role, setRole] = useState("");
 
-  // Track visibility of each panel (default: all visible)
+  // -------------------------------------------------------------------
+  // 2️⃣ Track visibility of each panel
+  // -------------------------------------------------------------------
   const [visiblePanels, setVisiblePanels] = useState<Record<PanelKey, boolean>>({
     UARTConfig: true,
     JobConfig: true,
     Chart: true,
     RawData: true,
     AggregateData: true,
+    AuditLog: true,
   });
 
- 
-  // Decode JWT and set user/role on mount
+  // -------------------------------------------------------------------
+  // 3️⃣ Decode JWT and set user/role on mount
+  // -------------------------------------------------------------------
   useEffect(() => {
     const token = localStorage.getItem("token");
+    console.log("Decoding token on dashboard mount:", token);
+    
     if (!token) {
       window.location.href = "/login";
       return;
     }
     try {
       const decoded = jwt_decode<JwtPayload>(token);
-      setUser(decoded.userName); // or decoded.sub if using 'sub'
-      setRole(decoded.role.toLowerCase()); // normalize role
+      setUser(decoded.userName);
+      setRole(decoded.role.toLowerCase());
+      localStorage.setItem("userName", decoded.userName);
+      localStorage.setItem("role", decoded.role.toLowerCase());
     } catch (err) {
       localStorage.removeItem("token");
       window.location.href = "/login";
     }
   }, []);
 
-  
-  // Logout handler
+  // -------------------------------------------------------------------
+  // 4️⃣ Logout handler
+  // -------------------------------------------------------------------
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("role");
     window.location.href = "/login";
   };
 
-  // Use custom hook to track config lock status
-  // Track config lock state
+  // -------------------------------------------------------------------
+  // 5️⃣ Use custom hook to track config lock status
+  // -------------------------------------------------------------------
   const lockInfo = useConfigLock();
 
   useEffect(() => {
     const fetchLockStatus = async () => {
+      const token = localStorage.getItem("token");
+      console.log("Fetching lock status for user:", userName);
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/config/status`, {
-        headers: { "X-User": userName },
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "X-User": userName,
+        },
       });
+
       const data = await res.json();
       console.log("Lock status:", data);
       lockInfo.setLockInfo(data);
     };
 
     fetchLockStatus();
-    const interval = setInterval(fetchLockStatus, 5000);
+    const interval = setInterval(fetchLockStatus, 50000);
     return () => clearInterval(interval);
   }, [userName]);
 
-  // Lock/unlock handlers (call backend API)
+  // -------------------------------------------------------------------
+  // 6️⃣ Lock/unlock handlers with proper headers
+  // -------------------------------------------------------------------
   const handleLock = async () => {
+    const token = localStorage.getItem("token");
+    console.log("Locking config by", userName, "with role", role);
+
     await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/config/lock`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ userName, role }),
     });
   };
 
   const handleUnlock = async () => {
+    const token = localStorage.getItem("token");
+    console.log("Unlocking config by", userName, "with role", role);
+
     await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/config/unlock`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ userName, role }),
     });
   };
 
-
-  // If dashboard is locked by another user, show banner and disable panels
+  // -------------------------------------------------------------------
+  // 7️⃣ Show lock banner if dashboard is locked by another user
+  // -------------------------------------------------------------------
   if (lockInfo.lockInfo.is_locked && lockInfo.lockInfo.locked_by !== userName) {
-  return (
-    <LockBanner
-      locked_by={lockInfo.lockInfo.locked_by ?? "unknown"}
-      role={lockInfo.lockInfo.role ?? "unknown"}
-    />
-  );
-}
+    return (
+      <LockBanner
+        locked_by={lockInfo.lockInfo.locked_by ?? "unknown"}
+        role={lockInfo.lockInfo.role ?? "unknown"}
+      />
+    );
+  }
 
-
+  // -------------------------------------------------------------------
+  // 8️⃣ Render dashboard layout
+  // -------------------------------------------------------------------
   return (
     <div className="dashboard-container">
       <div className="dashboard-topbar">
@@ -141,7 +170,6 @@ export default function Dashboard() {
         />
         {/* Main content area */}
         <div className="dashboard-main">
-          {/* Pass lock state and handlers to panels */}
           <PanelRenderer
             role={role}
             visiblePanels={visiblePanels}
@@ -156,3 +184,4 @@ export default function Dashboard() {
     </div>
   );
 }
+``

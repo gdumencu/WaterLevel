@@ -1,16 +1,16 @@
 # backend/app/auth/dependencies.py
 
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
-from typing import Dict
-from jose import jwt, JWTError
+# from fastapi import Depends, HTTPException, status
+# from fastapi.security import OAuth2PasswordBearer
+# from typing import Dict
+# from jose import jwt, JWTError
 
-# OAuth2 scheme for JWT bearer token
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+# # OAuth2 scheme for JWT bearer token
+# oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
-# Secret key for JWT decoding (replace with your actual secret)
-SECRET_KEY = "your-secret-key"
-ALGORITHM = "HS256"
+# # Secret key for JWT decoding (replace with your actual secret)
+# SECRET_KEY = "your-secret-key"
+# ALGORITHM = "HS256"
 
 # def get_current_user_with_role(token: str = Depends(oauth2_scheme)) -> Dict:
 #     """

@@ -5,15 +5,16 @@ import jobIcon from "../../assets/job.png";
 import chartIcon from "../../assets/chart.png";
 import rawdataIcon from "../../assets/raw_data.png";
 import aggregateIcon from "../../assets/aggregated.png";
+import auditLogIcon from "../../assets/pdf.png";
 
-type PanelKey = "UARTConfig" | "JobConfig" | "Chart" | "RawData" | "AggregateData";
-
+type PanelKey = "UARTConfig" | "JobConfig" | "Chart" | "RawData" | "AggregateData" | "AuditLog";
 const buttons: { key: PanelKey; label: string; icon: string | { src: string }; roles: string[] }[] = [
   { key: "UARTConfig", label: "UART Config", icon: uartIcon, roles: ["admin"] },
   { key: "JobConfig", label: "Job Config", icon: jobIcon, roles: ["admin", "operator"] },
   { key: "Chart", label: "Chart", icon: chartIcon, roles: ["admin", "operator", "viewer"] },
   { key: "RawData", label: "Raw Data", icon: rawdataIcon, roles: ["admin", "operator"] },
   { key: "AggregateData", label: "Aggregate Data", icon: aggregateIcon, roles: ["admin", "operator"] },
+  { key: "AuditLog", label: "Audit Log", icon: auditLogIcon, roles: ["admin", "operator"] },
 ];
 
 interface SidebarProps {

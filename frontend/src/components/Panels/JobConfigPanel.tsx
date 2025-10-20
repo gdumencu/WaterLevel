@@ -43,3 +43,7 @@ export default function JobConfig({ user, role, isLocked, locked_by, onLock, onU
   );
 }
 
+// function useState(arg0: boolean): [any, any] {
+//   throw new Error("Function not implemented.");
+// }
+
